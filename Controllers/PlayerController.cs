@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using players_api.Models;
+using players_api.Services;
 
 namespace players_api.Controllers
 {
@@ -12,35 +13,29 @@ namespace players_api.Controllers
     [Route("[controller]")]
     public class PlayerController : ControllerBase
     {
-        private static List<Player> players = new List<Player>
+        private readonly IPlayerService _playerService;
+
+        public PlayerController(IPlayerService playerService)
         {
-            new Player{Name = "Test1", Age = 17, Id = 1},
-            new Player{Name = "Test2", Age = 18, Id = 2}
-        };
+            _playerService = playerService;
+        }
 
         [HttpGet("getAll")]
         public ActionResult Get()
         {
-            return Ok(players);
+            return Ok(_playerService.GetAllPlayers());
         }
 
         [HttpGet("{Id}")]
         public ActionResult<Player> GetOne(int Id)
         {
-            Player pl = players.FirstOrDefault(p => p.Id == Id);
-
-            if (pl == null)
-                return NotFound();
-
-            return Ok(pl);
+            return Ok(_playerService.GetPlayerById(Id));
         }
 
         [HttpPost("create")]
         public ActionResult<List<Player>> Create(Player pl)
         {
-            players.Add(pl);
-
-            return Ok(players);
+            return Ok(_playerService.CreatePlayer(pl));
         }
     }
 }
