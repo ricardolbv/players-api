@@ -1,5 +1,6 @@
 ﻿using players_api.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace players_api.Services
 {
@@ -10,18 +11,18 @@ namespace players_api.Services
             new Player{Name = "Test1", Age = 17, Id = 1},
             new Player{Name = "Test2", Age = 18, Id = 2}
         };
-        public List<Player> CreatePlayer(Player player)
+        public async Task<List<Player>> CreatePlayer(Player player)
         {
             players.Add(player);
             return players;
         }
 
-        public List<Player> GetAllPlayers()
+        public async Task<List<Player>> GetAllPlayers()
         {
             return players;
         }
 
-        public Player GetPlayerById(int id)
+        public async Task<Player> GetPlayerById(int id)
         {
             Player pl = players.Find(x => x.Id == id);
                 

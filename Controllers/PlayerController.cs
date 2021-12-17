@@ -21,21 +21,21 @@ namespace players_api.Controllers
         }
 
         [HttpGet("getAll")]
-        public ActionResult Get()
+        public async Task<ActionResult> Get()
         {
-            return Ok(_playerService.GetAllPlayers());
+            return Ok(await _playerService.GetAllPlayers());
         }
 
         [HttpGet("{Id}")]
-        public ActionResult<Player> GetOne(int Id)
+        public async Task<ActionResult<Player>> GetOne(int Id)
         {
-            return Ok(_playerService.GetPlayerById(Id));
+            return Ok(await _playerService.GetPlayerById(Id));
         }
 
         [HttpPost("create")]
-        public ActionResult<List<Player>> Create(Player pl)
+        public async Task<ActionResult<List<Player>>> Create(Player pl)
         {
-            return Ok(_playerService.CreatePlayer(pl));
+            return Ok(await _playerService.CreatePlayer(pl));
         }
     }
 }
