@@ -11,25 +11,38 @@ namespace players_api.Services
             new Player{Name = "Test1", Age = 17, Id = 1},
             new Player{Name = "Test2", Age = 18, Id = 2}
         };
-        public async Task<List<Player>> CreatePlayer(Player player)
+        public async Task<ServiceResponse<List<Player>>> CreatePlayer(Player player)
         {
+            var serviceResponse = new ServiceResponse<List<Player>>();
             players.Add(player);
-            return players;
+            serviceResponse.Data = players;
+
+            return serviceResponse;
         }
 
-        public async Task<List<Player>> GetAllPlayers()
+        public async Task<ServiceResponse<List<Player>>> GetAllPlayers()
         {
-            return players;
+            var serviceResponse = new ServiceResponse<List<Player>>();
+            serviceResponse.Data = players;
+
+            return serviceResponse;
         }
 
-        public async Task<Player> GetPlayerById(int id)
+        public async Task<ServiceResponse<Player>> GetPlayerById(int id)
         {
+            var serviceResponse = new ServiceResponse<Player>();
             Player pl = players.Find(x => x.Id == id);
+            serviceResponse.Data = pl;
                 
             if(pl == null)
-                return null;
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Data = null;
 
-            return pl;
+                return serviceResponse;
+            }
+
+            return serviceResponse;
         }
     }
 }

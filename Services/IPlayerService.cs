@@ -7,8 +7,8 @@ namespace players_api.Services
 {
     public interface IPlayerService
     {
-        Task<List<Player>> GetAllPlayers();
-        Task<Player> GetPlayerById(int id);
-        Task<List<Player>> CreatePlayer(Player player);
+       Task<ServiceResponse<List<Player>>> GetAllPlayers();
+       Task<ServiceResponse<Player>> GetPlayerById(int id);
+       Task<ServiceResponse<List<Player>>> CreatePlayer(Player player);
     }
 }
