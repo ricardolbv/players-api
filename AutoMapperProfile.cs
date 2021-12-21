@@ -10,6 +10,7 @@ namespace players_api
         {
             CreateMap<Player, GetPlayerDto>();
             CreateMap<AddPlayerDto, Player>();
+            CreateMap<UpdatePlayerDto, Player>();
         }
     }
 }

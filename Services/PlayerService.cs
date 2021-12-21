@@ -48,5 +48,18 @@ namespace players_api.Services
 
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<GetPlayerDto>> UpdatePlayer(UpdatePlayerDto player)
+        {
+            var serviceResponse = new ServiceResponse<GetPlayerDto>();
+            Player pl = players.FirstOrDefault(p => p.Id == player.Id);
+
+            pl.Name = player.Name;
+            pl.Age = player.Age;
+
+            serviceResponse.Data = _mapper.Map<GetPlayerDto>(pl);
+
+            return serviceResponse;
+        }
     }
 }

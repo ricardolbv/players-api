@@ -38,5 +38,11 @@ namespace players_api.Controllers
         {
             return Ok(_playerService.CreatePlayer(pl));
         }
+
+        [HttpPut("update")]
+        public async Task<ActionResult<ServiceResponse<GetPlayerDto>>> Update(UpdatePlayerDto player)
+        {
+            return Ok(_playerService.UpdatePlayer(player));
+        }
     }
 }
