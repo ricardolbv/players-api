@@ -44,5 +44,11 @@ namespace players_api.Controllers
         {
             return Ok(_playerService.UpdatePlayer(player));
         }
+
+        [HttpDelete("delete/{Id}")]
+        public async Task<ActionResult<ServiceResponse<List<GetPlayerDto>>>> Delete(int Id)
+        {
+            return Ok(_playerService.DeletePlayer(Id));
+        }
     }
 }

@@ -61,5 +61,17 @@ namespace players_api.Services
 
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<List<GetPlayerDto>>> DeletePlayer(int id)
+        {
+            var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
+            Player pl = players.FirstOrDefault(p => p.Id == id);
+            players.Remove(pl);
+
+            serviceResponse.Data = players.Select(p =>
+                _mapper.Map<GetPlayerDto>(p)).ToList();
+
+            return serviceResponse;
+        }
     }
 }

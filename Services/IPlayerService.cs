@@ -11,6 +11,6 @@ namespace players_api.Services
         Task<ServiceResponse<GetPlayerDto>> GetPlayerById(int id);
         Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto player);
         Task<ServiceResponse<GetPlayerDto>> UpdatePlayer(UpdatePlayerDto player);
-       
+        Task<ServiceResponse<List<GetPlayerDto>>> DeletePlayer(int id);
     }
 }
