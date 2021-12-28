@@ -4,16 +4,20 @@ using System.Threading.Tasks;
 using AutoMapper;
 using players_api.Dtos.Player;
 using System.Linq;
+using players_api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace players_api.Services
 {
     public class PlayerService : IPlayerService
     {
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public PlayerService(IMapper mapper)
+        public PlayerService(IMapper mapper, DataContext context)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         private static List<Player> players = new List<Player>
@@ -24,10 +28,12 @@ namespace players_api.Services
         public async Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto player)
         {
             var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
-            players.Add(_mapper.Map<Player>(player));
+            await _context.Characters.AddAsync(_mapper.Map<Player>(player));
 
-            serviceResponse.Data = players.Select(p =>
-                _mapper.Map<GetPlayerDto>(p)).ToList();
+            serviceResponse.Data = await _context.Characters.Select(p =>
+                _mapper.Map<GetPlayerDto>(p)).ToListAsync();
+
+            await _context.SaveChangesAsync();
 
             return serviceResponse;
         }
@@ -35,8 +41,9 @@ namespace players_api.Services
         public async Task<ServiceResponse<List<GetPlayerDto>>> GetAllPlayers()
         {
             var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
-            serviceResponse.Data = players.Select(p =>
-                _mapper.Map<GetPlayerDto>(p)).ToList();
+
+            serviceResponse.Data = await _context.Characters.Select(p =>
+                _mapper.Map<GetPlayerDto>(p)).ToListAsync();
 
             return serviceResponse;
         }
@@ -44,7 +51,9 @@ namespace players_api.Services
         public async Task<ServiceResponse<GetPlayerDto>> GetPlayerById(int id)
         {
             var serviceResponse = new ServiceResponse<GetPlayerDto>();
-            serviceResponse.Data = _mapper.Map<GetPlayerDto>(players.First(p => p.Id == id));
+            var dbCharacter = await _context.Characters.FirstOrDefaultAsync(p => p.Id == id);
+
+            serviceResponse.Data = _mapper.Map<GetPlayerDto>(dbCharacter);
 
             return serviceResponse;
         }
