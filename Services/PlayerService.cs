@@ -25,15 +25,16 @@ namespace players_api.Services
             new Player{Name = "Test1", Age = 17, Id = 1},
             new Player{Name = "Test2", Age = 18, Id = 2}
         };
-        public async Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto player)
+        public async Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto newPlayer)
         {
             var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
-            await _context.Characters.AddAsync(_mapper.Map<Player>(player));
+            Player player = _mapper.Map<Player>(newPlayer);
+
+            _context.Characters.Add(player);
+            await _context.SaveChangesAsync();
 
             serviceResponse.Data = await _context.Characters.Select(p =>
                 _mapper.Map<GetPlayerDto>(p)).ToListAsync();
-
-            await _context.SaveChangesAsync();
 
             return serviceResponse;
         }
