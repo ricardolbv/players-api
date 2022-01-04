@@ -36,19 +36,19 @@ namespace players_api.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ServiceResponse<List<GetPlayerDto>>>> Create(AddPlayerDto pl)
         {
-            return Ok(_playerService.CreatePlayer(pl));
+            return Ok(await _playerService.CreatePlayer(pl));
         }
 
         [HttpPut("update")]
         public async Task<ActionResult<ServiceResponse<GetPlayerDto>>> Update(UpdatePlayerDto player)
         {
-            return Ok(_playerService.UpdatePlayer(player));
+            return Ok(await _playerService.UpdatePlayer(player));
         }
 
         [HttpDelete("delete/{Id}")]
         public async Task<ActionResult<ServiceResponse<List<GetPlayerDto>>>> Delete(int Id)
         {
-            return Ok(_playerService.DeletePlayer(Id));
+            return Ok(await _playerService.DeletePlayer(Id));
         }
     }
 }

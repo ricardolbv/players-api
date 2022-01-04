@@ -1,4 +1,5 @@
-﻿namespace players_api.Models
+﻿
+namespace players_api.Models
 {
     public class Player
     {

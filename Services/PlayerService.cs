@@ -20,11 +20,6 @@ namespace players_api.Services
             _context = context;
         }
 
-        private static List<Player> players = new List<Player>
-        {
-            new Player{Name = "Test1", Age = 17, Id = 1},
-            new Player{Name = "Test2", Age = 18, Id = 2}
-        };
         public async Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto newPlayer)
         {
             var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
@@ -62,11 +57,12 @@ namespace players_api.Services
         public async Task<ServiceResponse<GetPlayerDto>> UpdatePlayer(UpdatePlayerDto player)
         {
             var serviceResponse = new ServiceResponse<GetPlayerDto>();
-            Player pl = players.FirstOrDefault(p => p.Id == player.Id);
+            var pl = _context.Characters.FirstOrDefault(p => p.Id == player.Id);
 
             pl.Name = player.Name;
             pl.Age = player.Age;
 
+            await _context.SaveChangesAsync();
             serviceResponse.Data = _mapper.Map<GetPlayerDto>(pl);
 
             return serviceResponse;
@@ -75,11 +71,12 @@ namespace players_api.Services
         public async Task<ServiceResponse<List<GetPlayerDto>>> DeletePlayer(int id)
         {
             var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
-            Player pl = players.FirstOrDefault(p => p.Id == id);
-            players.Remove(pl);
+            Player pl = _context.Characters.FirstOrDefault(p => p.Id == id);
+            _context.Characters.Remove(pl);
+            await _context.SaveChangesAsync();  
 
-            serviceResponse.Data = players.Select(p =>
-                _mapper.Map<GetPlayerDto>(p)).ToList();
+            serviceResponse.Data = await _context.Characters.Select(p =>
+                _mapper.Map<GetPlayerDto>(p)).ToListAsync();
 
             return serviceResponse;
         }
