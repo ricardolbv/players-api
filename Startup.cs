@@ -15,8 +15,6 @@ using players_api.Services;
 using AutoMapper;
 using players_api.Data;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace players_api
 {
@@ -39,6 +37,7 @@ namespace players_api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "players_api", Version = "v1" });
             });
             services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
          
