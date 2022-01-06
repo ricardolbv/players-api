@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using players_api.Models;
 using players_api.Services;
 using players_api.Dtos.Player;
+using Microsoft.AspNetCore.Authorization;
 
 namespace players_api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class PlayerController : ControllerBase
