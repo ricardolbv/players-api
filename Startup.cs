@@ -40,21 +40,19 @@ namespace players_api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "players_api", Version = "v1" });
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
-                    Description = "Standard Authorization header using the Breare Scheme. Example: \"bearer{token}\"",
+                    Description = "Standard Authorization header using the Breare Scheme. Example: \"Bearer {token}\"",
                     In = ParameterLocation.Header,
-                    Name = "Autorization",
+                    Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey
                 });
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
-            services.AddScoped<IPlayerService, PlayerService>();
-            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddAutoMapper(typeof(Startup));
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {
-                        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                        options.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidateIssuerSigningKey = true,
                             IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(Configuration
@@ -62,7 +60,10 @@ namespace players_api
                             ValidateIssuer = false,
                             ValidateAudience = false,
                         };
-                    });  
+                    });
+
+            services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,9 +80,9 @@ namespace players_api
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
