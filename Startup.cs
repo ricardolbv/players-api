@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Filters;
+using Microsoft.AspNetCore.Http;
 
 namespace players_api
 {
@@ -64,7 +65,8 @@ namespace players_api
 
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
-        }
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
+            }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
