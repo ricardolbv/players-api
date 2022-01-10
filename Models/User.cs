@@ -9,5 +9,6 @@ namespace players_api.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PassworldSalt { get; set; }
         public List<Player> Players { get; set; }
+        public Team Team { get; set; }
     }
 }

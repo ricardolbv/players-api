@@ -30,6 +30,16 @@ namespace players_api.Services
         public async Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto newPlayer)
         {
             var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
+            Team team = await _context.Teams.FirstAsync(t => t.Id == newPlayer.TeamId);
+
+            if(team == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Team not found";
+
+                return serviceResponse; 
+            }
+
             Player player = _mapper.Map<Player>(newPlayer);
 
             _context.Characters.Add(player);

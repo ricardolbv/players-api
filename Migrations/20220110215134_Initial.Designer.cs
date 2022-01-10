@@ -10,8 +10,8 @@ using players_api.Data;
 namespace players_api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220104221429_UserModel")]
-    partial class UserModel
+    [Migration("20220110215134_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,14 +34,40 @@ namespace players_api.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TeamId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TeamId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Characters");
+                });
+
+            modelBuilder.Entity("players_api.Models.Team", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("players_api.Models.User", b =>
@@ -67,6 +93,10 @@ namespace players_api.Migrations
 
             modelBuilder.Entity("players_api.Models.Player", b =>
                 {
+                    b.HasOne("players_api.Models.Team", null)
+                        .WithMany("Players")
+                        .HasForeignKey("TeamId");
+
                     b.HasOne("players_api.Models.User", "User")
                         .WithMany("Players")
                         .HasForeignKey("UserId");
@@ -74,9 +104,27 @@ namespace players_api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("players_api.Models.Team", b =>
+                {
+                    b.HasOne("players_api.Models.User", "User")
+                        .WithOne("Team")
+                        .HasForeignKey("players_api.Models.Team", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("players_api.Models.Team", b =>
+                {
+                    b.Navigation("Players");
+                });
+
             modelBuilder.Entity("players_api.Models.User", b =>
                 {
                     b.Navigation("Players");
+
+                    b.Navigation("Team");
                 });
 #pragma warning restore 612, 618
         }

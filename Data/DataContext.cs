@@ -12,5 +12,6 @@ namespace players_api.Data
 
         public DbSet<Player> Characters { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Team> Teams { get; set; }
     }
 }

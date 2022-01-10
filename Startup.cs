@@ -65,6 +65,7 @@ namespace players_api
 
             services.AddScoped<IPlayerService, PlayerService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<ITeamService, TeamService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
             }
 

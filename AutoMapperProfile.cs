@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using players_api.Models;
 using players_api.Dtos.Player;
+using players_api.Dtos.Team;
 
 namespace players_api
 {
@@ -11,6 +12,8 @@ namespace players_api
             CreateMap<Player, GetPlayerDto>();
             CreateMap<AddPlayerDto, Player>();
             CreateMap<UpdatePlayerDto, Player>();
+            CreateMap<Team, GetTeamDto>();
+            CreateMap<AddTeamDto, Team>();
         }
     }
 }
