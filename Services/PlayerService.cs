@@ -8,6 +8,7 @@ using players_api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using players_api.Respositories;
 
 namespace players_api.Services
 {
@@ -16,12 +17,15 @@ namespace players_api.Services
         private readonly IMapper _mapper;
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IPlayerRepository _plRepository;
 
-        public PlayerService(IMapper mapper, DataContext context, IHttpContextAccessor httpContext)
+        public PlayerService(IMapper mapper, DataContext context, IHttpContextAccessor httpContext,
+                IPlayerRepository playerRepository)
         {
             _mapper = mapper;
             _context = context;
             _httpContext = httpContext;
+            _plRepository = playerRepository;
         }
 
         private int GetUserId() => int.Parse(_httpContext.HttpContext.User
