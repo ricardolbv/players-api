@@ -8,6 +8,7 @@ using players_api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using players_api.Respositories;
 
 namespace players_api.Services
 {
@@ -16,24 +17,28 @@ namespace players_api.Services
         private readonly IMapper _mapper;
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IPlayerRepository _plRepository;
 
-        public PlayerService(IMapper mapper, DataContext context, IHttpContextAccessor httpContext)
+        public PlayerService(IMapper mapper, DataContext context, IHttpContextAccessor httpContext,
+                IPlayerRepository playerRepository)
         {
             _mapper = mapper;
             _context = context;
             _httpContext = httpContext;
+            _plRepository = playerRepository;
         }
 
         private int GetUserId() => int.Parse(_httpContext.HttpContext.User
                                                          .FindFirstValue(ClaimTypes.NameIdentifier));
 
-        public async Task<ServiceResponse<List<GetPlayerDto>>> CreatePlayer(AddPlayerDto newPlayer)
+        public async Task<ServiceResponse<bool>> CreatePlayer(AddPlayerDto newPlayer)
         {
-            var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
+            var serviceResponse = new ServiceResponse<bool>();
             Team team = await _context.Teams.FirstAsync(t => t.Id == newPlayer.TeamId);
 
             if(team == null)
             {
+                serviceResponse.Data = false;
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Team not found";
 
@@ -42,21 +47,23 @@ namespace players_api.Services
 
             Player player = _mapper.Map<Player>(newPlayer);
 
-            _context.Characters.Add(player);
-            await _context.SaveChangesAsync();
-
-            serviceResponse.Data = await _context.Characters.Select(p =>
-                _mapper.Map<GetPlayerDto>(p)).ToListAsync();
+            var res = await _plRepository.CreatePlayer(newPlayer);
+            if (res)
+            {
+                serviceResponse.Data = res;
+            }
+            else
+            {
+                serviceResponse.Data = false;
+            }
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetPlayerDto>>> GetAllPlayers()
+        public async Task<ServiceResponse<IEnumerable<GetPlayerDto>>> GetAllPlayers()
         {
-            var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
-
-            var playersDb =  await _context.Characters.Where(p => p.User.Id == GetUserId()).ToListAsync();
-            serviceResponse.Data = playersDb.Select(p => _mapper.Map<GetPlayerDto>(p)).ToList();
+            var serviceResponse = new ServiceResponse<IEnumerable<GetPlayerDto>>();
+            serviceResponse.Data = await _plRepository.GetAllByUserId(GetUserId());
 
             return serviceResponse;
         }
@@ -64,39 +71,23 @@ namespace players_api.Services
         public async Task<ServiceResponse<GetPlayerDto>> GetPlayerById(int id)
         {
             var serviceResponse = new ServiceResponse<GetPlayerDto>();
-            var dbCharacter = await _context.Characters
-                                            .FirstOrDefaultAsync(p => p.Id == id && p.User.Id == GetUserId());
-
-            serviceResponse.Data = _mapper.Map<GetPlayerDto>(dbCharacter);
+            serviceResponse.Data = await _plRepository.GetPlayerById(id, GetUserId());
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetPlayerDto>> UpdatePlayer(UpdatePlayerDto player)
+        public async Task<ServiceResponse<bool>> UpdatePlayer(UpdatePlayerDto player)
         {
-            var serviceResponse = new ServiceResponse<GetPlayerDto>();
-            var pl = _context.Characters
-                             .FirstOrDefault(p => p.Id == player.Id && p.User.Id == GetUserId());
-
-            pl.Name = player.Name;
-            pl.Age = player.Age;
-
-            await _context.SaveChangesAsync();
-            serviceResponse.Data = _mapper.Map<GetPlayerDto>(pl);
+            var serviceResponse = new ServiceResponse<bool>();
+            serviceResponse.Data = await _plRepository.UpdatePlayer(player);
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetPlayerDto>>> DeletePlayer(int id)
+        public async Task<ServiceResponse<bool>> DeletePlayer(int id)
         {
-            var serviceResponse = new ServiceResponse<List<GetPlayerDto>>();
-            Player pl = _context.Characters.FirstOrDefault(p => p.Id == id &&
-                                                           p.User.Id == GetUserId());
-            _context.Characters.Remove(pl);
-            await _context.SaveChangesAsync();  
-
-            serviceResponse.Data = await _context.Characters.Select(p =>
-                _mapper.Map<GetPlayerDto>(p)).ToListAsync();
+            var serviceResponse = new ServiceResponse<bool>();
+            serviceResponse.Data = await _plRepository.DeletePlayerById(id);
 
             return serviceResponse;
         }
