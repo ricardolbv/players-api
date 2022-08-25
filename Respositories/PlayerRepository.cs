@@ -3,6 +3,7 @@ using players_api.Configuration;
 using players_api.Dtos.Player;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace players_api.Respositories
@@ -17,11 +18,11 @@ namespace players_api.Respositories
 
         public async Task<bool> CreatePlayer(AddPlayerDto player)
         {
-            var statement = "INSERT INTO Characters (Name, Age) VALUES (@Name, @Age)";
+            var statement = "INSERT INTO Characters (Name, Age, TeamId) VALUES (@Name, @Age, @TeamId)";
 
             using (var connection = _context.CreateConnection())
             {
-                var res = await connection.ExecuteAsync(statement, new { Name = player.Name, Age = player.Age });
+                var res = await connection.ExecuteAsync(statement, new { Name = player.Name, Age = player.Age, TeamId = player.TeamId });
 
                 return res > 0;
             }
@@ -45,7 +46,9 @@ namespace players_api.Respositories
 
             using (var connection = _context.CreateConnection())
             {
-                return await connection.QueryAsync<GetPlayerDto>(statement, new { UserId });
+                var res = await connection.QueryAsync<GetPlayerDto>(statement, new { UserId });
+
+                return res.ToList();
             }
         }
 
